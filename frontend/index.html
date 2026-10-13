@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Govt Fuel Distribution & Monitoring System</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  .nav-btn.active{background:#065f46;color:#fff}
+  .section{display:none}
+  .section.active{display:block}
+</style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen">
+
+<div class="flex min-h-screen">
+
+  <!-- ===== SIDEBAR ===== -->
+  <aside class="hidden md:flex w-64 flex-col bg-emerald-900 text-emerald-100 p-4 gap-1 shrink-0">
+    <div class="mb-6 px-2">
+      <h1 class="text-lg font-bold text-white leading-tight">Govt Fuel System</h1>
+      <p class="text-xs text-emerald-300 mt-1">Distribution & Monitoring</p>
+    </div>
+    <button class="nav-btn active text-left px-3 py-2 rounded-lg hover:bg-emerald-800" data-target="dashboard">📊 Dashboard</button>
+    <button class="nav-btn text-left px-3 py-2 rounded-lg hover:bg-emerald-800" data-target="prices">💰 Govt Price</button>
+    <button class="nav-btn text-left px-3 py-2 rounded-lg hover:bg-emerald-800" data-target="imports">🚢 Import (from abroad)</button>
+    <button class="nav-btn text-left px-3 py-2 rounded-lg hover:bg-emerald-800" data-target="allocations">🚚 Allocation</button>
+    <button class="nav-btn text-left px-3 py-2 rounded-lg hover:bg-emerald-800" data-target="stations">⛽ Stations</button>
+    <button class="nav-btn text-left px-3 py-2 rounded-lg hover:bg-emerald-800" data-target="sales">🧾 Sales</button>
+    <button class="nav-btn text-left px-3 py-2 rounded-lg hover:bg-emerald-800" data-target="vehicles">🚗 Vehicles</button>
+    <button class="nav-btn text-left px-3 py-2 rounded-lg hover:bg-emerald-800" data-target="users">👤 Users</button>
+  </aside>
+
+  <!-- ===== MAIN ===== -->
+  <div class="flex-1 min-w-0">
+
+    <!-- Top bar -->
+    <header class="bg-white shadow-sm px-4 md:px-8 py-4 flex items-center justify-between gap-4">
+      <div>
+        <h2 id="pageTitle" class="text-xl font-semibold">Dashboard</h2>
+        <p class="text-xs text-slate-500">All fuel is imported from foreign countries</p>
+      </div>
+      <select id="mobileNav" class="md:hidden border rounded-lg px-3 py-2 text-sm">
+        <option value="dashboard">Dashboard</option>
+        <option value="prices">Govt Price</option>
+        <option value="imports">Import</option>
+        <option value="allocations">Allocation</option>
+        <option value="stations">Stations</option>
+        <option value="sales">Sales</option>
+        <option value="vehicles">Vehicles</option>
+        <option value="users">Users</option>
+      </select>
+    </header>
+
+    <main class="p-4 md:p-8">
+
+      <!-- ===== DASHBOARD ===== -->
+      <section id="dashboard" class="section active space-y-6">
+        <div id="statCards" class="grid gap-4 grid-cols-2 lg:grid-cols-4"></div>
+
+        <div class="grid gap-6 lg:grid-cols-2">
+          <div class="bg-white rounded-xl shadow-sm p-5">
+            <h3 class="font-semibold text-emerald-800 mb-4">Central Stock (litres)</h3>
+            <div id="centralStockBars" class="space-y-4"></div>
+          </div>
+          <div class="bg-white rounded-xl shadow-sm p-5">
+            <h3 class="font-semibold text-emerald-800 mb-4">Imports by Country (litres)</h3>
+            <div id="countryBars" class="space-y-4"></div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm p-5">
+          <h3 class="font-semibold text-red-700 mb-3">⚠ Alerts</h3>
+          <ul id="alerts" class="space-y-2 text-sm"></ul>
+        </div>
+      </section>
+
+      <!-- ===== TABLE SECTIONS ===== -->
+      <section id="prices" class="section"><div class="bg-white rounded-xl shadow-sm p-5 overflow-x-auto"><h3 class="font-semibold mb-3">Price History (BDT/litre)</h3><div id="pricesTable"></div></div></section>
+      <section id="imports" class="section"><div class="bg-white rounded-xl shadow-sm p-5 overflow-x-auto"><h3 class="font-semibold mb-3">Imports (foreign suppliers only)</h3><div id="importsTable"></div></div></section>
+      <section id="allocations" class="section"><div class="bg-white rounded-xl shadow-sm p-5 overflow-x-auto"><h3 class="font-semibold mb-3">Allocations to Stations (GovtExport)</h3><div id="allocTable"></div></div></section>
+      <section id="stations" class="section space-y-6">
+        <div class="bg-white rounded-xl shadow-sm p-5 overflow-x-auto"><h3 class="font-semibold mb-3">Station List</h3><div id="stationsTable"></div></div>
+        <div class="bg-white rounded-xl shadow-sm p-5"><h3 class="font-semibold mb-4">Tank Levels</h3><div id="tankBars" class="space-y-4"></div></div>
+      </section>
+      <section id="sales" class="section"><div class="bg-white rounded-xl shadow-sm p-5 overflow-x-auto"><h3 class="font-semibold mb-3">Sales Details</h3><div id="salesTable"></div></div></section>
+      <section id="vehicles" class="section"><div class="bg-white rounded-xl shadow-sm p-5 overflow-x-auto"><h3 class="font-semibold mb-3">Vehicles & Usage Limits</h3><div id="vehiclesTable"></div></div></section>
+      <section id="users" class="section"><div class="bg-white rounded-xl shadow-sm p-5 overflow-x-auto"><h3 class="font-semibold mb-3">Users</h3><div id="usersTable"></div></div></section>
+
+    </main>
+    <footer class="text-center text-xs text-slate-400 pb-6">Database Design Project — govt_fuel_system</footer>
+  </div>
+</div>
+
+<script>
+/* ============ DATA (from the SQL sample data) ============ */
+const prices = [
+  {fuel:'Petrol', price:121.50, from:'2026-01-01'}, {fuel:'Petrol', price:125.00, from:'2026-07-01'},
+  {fuel:'Diesel', price:109.00, from:'2026-01-01'}, {fuel:'Diesel', price:112.50, from:'2026-07-01'},
+  {fuel:'Octane', price:131.00, from:'2026-01-01'}, {fuel:'CNG', price:65.00, from:'2026-01-01'}
+];
+const centralStock = [
+  {fuel:'Petrol', stock:66000}, {fuel:'Diesel', stock:64000},
+  {fuel:'Octane', stock:17000}, {fuel:'CNG', stock:0}
+];
+const imports = [
+  {country:'UAE', supplier:'Gulf Petro Trading', fuel:'Petrol', qty:50000, price:120.00, date:'2026-08-01'},
+  {country:'Singapore', supplier:'EastCoast Fuel Ltd.', fuel:'Diesel', qty:70000, price:108.00, date:'2026-08-02'},
+  {country:'Saudi Arabia', supplier:'Saudi Fuel Exports', fuel:'Octane', qty:20000, price:129.00, date:'2026-08-03'},
+  {country:'Singapore', supplier:'EastCoast Fuel Ltd.', fuel:'Petrol', qty:30000, price:121.00, date:'2026-08-15'},
+  {country:'India', supplier:'Indian Oil Corporation', fuel:'Diesel', qty:10000, price:107.50, date:'2026-08-20'}
+];
+const allocations = [
+  {station:'Mirpur Fuel Station', fuel:'Petrol', qty:8000, price:122, date:'2026-08-05'},
+  {station:'Gulshan Fuel Point', fuel:'Petrol', qty:6000, price:122, date:'2026-08-05'},
+  {station:'Agrabad Filling Station', fuel:'Diesel', qty:9000, price:110, date:'2026-08-06'},
+  {station:'Khulna City Pump', fuel:'Diesel', qty:7000, price:110, date:'2026-08-06'},
+  {station:'Mirpur Fuel Station', fuel:'Octane', qty:3000, price:130, date:'2026-08-07'}
+];
+const stations = [
+  {name:'Mirpur Fuel Station', license:'LIC-DHK-001', region:'Dhaka', status:'Active'},
+  {name:'Gulshan Fuel Point', license:'LIC-DHK-002', region:'Dhaka', status:'Active'},
+  {name:'Agrabad Filling Station', license:'LIC-CTG-001', region:'Chattogram', status:'Active'},
+  {name:'Khulna City Pump', license:'LIC-KHL-001', region:'Khulna', status:'Active'},
+  {name:'Rajshahi Highway Station', license:'LIC-RAJ-001', region:'Rajshahi', status:'Suspended'}
+];
+const tanks = [
+  {station:'Mirpur Fuel Station', fuel:'Petrol', stock:7200, cap:10000},
+  {station:'Gulshan Fuel Point', fuel:'Petrol', stock:5800, cap:8000},
+  {station:'Agrabad Filling Station', fuel:'Diesel', stock:8500, cap:12000},
+  {station:'Khulna City Pump', fuel:'Diesel', stock:6900, cap:9000},
+  {station:'Mirpur Fuel Station', fuel:'Octane', stock:2950, cap:5000}
+];
+const sales = [
+  {id:1, station:'Mirpur Fuel Station', reg:'DHK-METRO-GA-1234', fuel:'Petrol', qty:20, price:125, dt:'2026-09-01 08:15'},
+  {id:2, station:'Mirpur Fuel Station', reg:'DHK-METRO-GA-1234', fuel:'Petrol', qty:25, price:125, dt:'2026-09-05 09:00'},
+  {id:3, station:'Gulshan Fuel Point', reg:'DHK-METRO-KHA-5678', fuel:'Diesel', qty:60, price:112.5, dt:'2026-09-02 10:30'},
+  {id:4, station:'Agrabad Filling Station', reg:'CTG-METRO-GA-1111', fuel:'Petrol', qty:30, price:125, dt:'2026-09-03 14:00'},
+  {id:5, station:'Mirpur Fuel Station', reg:'DHK-METRO-GA-9999', fuel:'Octane', qty:40, price:131, dt:'2026-09-04 16:45'}
+];
+const vehicles = [
+  {reg:'DHK-METRO-GA-1234', owner:'Rahim Uddin', fuel:'Petrol', limit:40},
+  {reg:'DHK-METRO-KHA-5678', owner:'Karim Sheikh', fuel:'Diesel', limit:100},
+  {reg:'CTG-METRO-GA-1111', owner:'Fahim Reza', fuel:'Petrol', limit:35},
+  {reg:'KHL-METRO-KHA-2222', owner:'Nusrat Jahan', fuel:'Diesel', limit:80},
+  {reg:'DHK-METRO-GA-9999', owner:'Salma Akter', fuel:'Octane', limit:50}
+];
+const users = [
+  {name:'Anisur Rahman', role:'Admin', station:'Head Office'},
+  {name:'Farida Yasmin', role:'RegionalOfficer', station:'Head Office'},
+  {name:'Jasim Uddin', role:'StationOperator', station:'Mirpur Fuel Station'},
+  {name:'Rekha Begum', role:'StationOperator', station:'Gulshan Fuel Point'},
+  {name:'Tanvir Ahmed', role:'StationOperator', station:'Agrabad Filling Station'}
+];
+
+/* ============ HELPERS ============ */
+const fmt = n => Number(n).toLocaleString('en-US', {maximumFractionDigits:2});
+const badge = (text, color) => `<span class="px-2 py-0.5 rounded-full text-xs font-medium bg-${color}-100 text-${color}-700">${text}</span>`;
+
+function table(headers, rows){
+  return `<table class="w-full text-sm">
+    <thead><tr class="text-left text-xs uppercase text-slate-500 border-b">
+      ${headers.map(h => `<th class="py-2 pr-4 font-semibold">${h}</th>`).join('')}
+    </tr></thead>
+    <tbody>${rows.map(r => `<tr class="border-b last:border-0 hover:bg-slate-50">
+      ${r.map(c => `<td class="py-2 pr-4">${c}</td>`).join('')}</tr>`).join('')}
+    </tbody></table>`;
+}
+function bar(label, value, max, valueText, color='emerald'){
+  const pct = max ? Math.min(100, value / max * 100) : 0;
+  return `<div>
+    <div class="flex justify-between text-sm mb-1"><span>${label}</span><span class="text-slate-500">${valueText}</span></div>
+    <div class="h-2.5 bg-slate-200 rounded-full overflow-hidden"><div class="h-full bg-${color}-600 rounded-full" style="width:${pct}%"></div></div>
+  </div>`;
+}
+function card(title, value, color){
+  return `<div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-${color}-500">
+    <p class="text-xs uppercase text-slate-500">${title}</p>
+    <p class="text-2xl font-bold mt-1">${value}</p></div>`;
+}
+
+/* ============ DERIVED ============ */
+const usedByReg = {};
+sales.forEach(s => usedByReg[s.reg] = (usedByReg[s.reg] || 0) + s.qty);
+const totalRevenue = sales.reduce((a, s) => a + s.qty * s.price, 0);
+const totalImported = imports.reduce((a, i) => a + i.qty, 0);
+const activeStations = stations.filter(s => s.status === 'Active').length;
+
+/* ============ RENDER ============ */
+document.getElementById('statCards').innerHTML =
+  card('Total Imported (L)', fmt(totalImported), 'emerald') +
+  card('Active Stations', `${activeStations} / ${stations.length}`, 'sky') +
+  card('Total Sales (৳)', fmt(totalRevenue), 'amber') +
+  card('Source Countries', new Set(imports.map(i => i.country)).size, 'violet');
+
+const maxStock = Math.max(...centralStock.map(c => c.stock));
+document.getElementById('centralStockBars').innerHTML =
+  centralStock.map(c => bar(c.fuel, c.stock, maxStock, fmt(c.stock) + ' L')).join('');
+
+const byCountry = {};
+imports.forEach(i => byCountry[i.country] = (byCountry[i.country] || 0) + i.qty);
+const maxC = Math.max(...Object.values(byCountry));
+document.getElementById('countryBars').innerHTML =
+  Object.entries(byCountry).sort((a,b) => b[1]-a[1]).map(([c,q]) => bar(c, q, maxC, fmt(q) + ' L', 'sky')).join('');
+
+const alerts = [];
+vehicles.forEach(v => { const u = usedByReg[v.reg] || 0; if (u > v.limit) alerts.push(`🚗 <b>${v.reg}</b> (${v.owner}) exceeded limit of ${v.limit} L, used ${u} L — over by ${u - v.limit} L`); });
+tanks.forEach(t => { if (t.stock / t.cap < 0.30) alerts.push(`⛽ ${t.station} — ${t.fuel} stock below 30%`); });
+stations.filter(s => s.status !== 'Active').forEach(s => alerts.push(`🚫 ${s.name} (${s.license}) — ${s.status}`));
+document.getElementById('alerts').innerHTML = alerts.map(a => `<li class="bg-red-50 text-red-800 rounded-lg px-3 py-2">${a}</li>`).join('');
+
+document.getElementById('pricesTable').innerHTML = table(['Fuel','Price (৳/L)','From'],
+  prices.map(p => [p.fuel, fmt(p.price), p.from]));
+document.getElementById('importsTable').innerHTML = table(['Country','Supplier','Fuel','Quantity (L)','Price','Date'],
+  imports.map(i => [badge(i.country,'sky'), i.supplier, i.fuel, fmt(i.qty), fmt(i.price), i.date]));
+document.getElementById('allocTable').innerHTML = table(['Station','Fuel','Quantity (L)','Price','Date'],
+  allocations.map(a => [a.station, a.fuel, fmt(a.qty), fmt(a.price), a.date]));
+document.getElementById('stationsTable').innerHTML = table(['Name','License','Region','Status'],
+  stations.map(s => [s.name, s.license, s.region, badge(s.status, s.status === 'Active' ? 'emerald' : 'red')]));
+document.getElementById('tankBars').innerHTML = tanks.map(t => {
+  const pct = t.stock / t.cap;
+  return bar(`${t.station} — ${t.fuel}`, t.stock, t.cap, `${fmt(t.stock)} / ${fmt(t.cap)} L (${(pct*100).toFixed(1)}%)`, pct < 0.30 ? 'red' : 'emerald');
+}).join('');
+document.getElementById('salesTable').innerHTML = table(['#','Station','Vehicle','Fuel','Qty (L)','Price','Amount (৳)','Date/Time'],
+  sales.map(s => [s.id, s.station, s.reg, s.fuel, fmt(s.qty), fmt(s.price), fmt(s.qty*s.price), s.dt]));
+document.getElementById('vehiclesTable').innerHTML = table(['Reg No','Owner','Fuel','Limit (L)','Used (L)','Status'],
+  vehicles.map(v => { const u = usedByReg[v.reg] || 0;
+    return [v.reg, v.owner, v.fuel, v.limit, u, u > v.limit ? badge('Over by ' + (u - v.limit) + ' L','red') : badge('OK','emerald')]; }));
+document.getElementById('usersTable').innerHTML = table(['Name','Role','Station'],
+  users.map(u => [u.name, u.role, u.station]));
+
+/* ============ NAVIGATION ============ */
+const titles = {dashboard:'Dashboard', prices:'Govt Price', imports:'Import', allocations:'Allocation', stations:'Stations', sales:'Sales', vehicles:'Vehicles', users:'Users'};
+function show(id){
+  document.querySelectorAll('.section').forEach(s => s.classList.toggle('active', s.id === id));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.target === id));
+  document.getElementById('pageTitle').textContent = titles[id];
+  document.getElementById('mobileNav').value = id;
+}
+document.querySelectorAll('.nav-btn').forEach(b => b.addEventListener('click', () => show(b.dataset.target)));
+document.getElementById('mobileNav').addEventListener('change', e => show(e.target.value));
+</script>
+</body>
+</html>
